@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>قندیار | با قندیار گامی برای سلامتی بردار</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@200;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">ق</div>
+      <div>
+        <h1>قندیار</h1>
+        <p class="tagline">با قندیار گامی برای سلامتی بردار</p>
+      </div>
+    </div>
+    <nav class="nav" aria-label="منوی اصلی">
+      <a class="nav__item is-active" href="#dashboard">داشبورد</a>
+      <a class="nav__item" href="#glucose">ثبت قند</a>
+      <a class="nav__item" href="#insulin">ثبت انسولین</a>
+      <a class="nav__item" href="#meal">ثبت وعده غذایی</a>
+      <a class="nav__item" href="#reports">گزارش‌ها</a>
+      <a class="nav__item" href="#reminders">یادآورها</a>
+      <a class="nav__item" href="#settings">تنظیمات</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section id="dashboard" class="panel">
+      <div class="panel__head">
+        <h2>داشبورد امروز</h2>
+        <div class="panel__actions">
+          <button class="btn btn--ghost" id="btnSeed" type="button">بارگذاری دیتای نمونه</button>
+          <button class="btn" id="btnReset" type="button">پاک کردن داده‌ها</button>
+        </div>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card__label">آخرین قند</div>
+          <div class="card__value" id="lastGlucose">—</div>
+          <div class="card__hint" id="lastGlucoseHint">—</div>
+        </div>
+        <div class="card">
+          <div class="card__label">هدف شما</div>
+          <div class="card__value" id="targetRange">—</div>
+          <div class="card__hint">(mg/dL) دیابت نوع ۱</div>
+        </div>
+        <div class="card">
+          <div class="card__label">وضعیت امروز</div>
+          <div class="card__value" id="todayStatus">—</div>
+          <div class="card__hint" id="todayStatusHint">—</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="panel box">
+          <h3>نمودار قند امروز</h3>
+          <canvas id="glucoseChart" height="120"></canvas>
+          <p class="muted">محدوده هدف روی نمودار مشخص است.</p>
+        </div>
+        <div class="panel box">
+          <h3>تایم‌لاین امروز</h3>
+          <div id="timeline" class="timeline"></div>
+        </div>
+      </div>
+
+      <div class="quick">
+        <a class="btn" href="#glucose">➕ ثبت قند</a>
+        <a class="btn" href="#insulin">➕ ثبت انسولین</a>
+        <a class="btn" href="#meal">➕ ثبت وعده</a>
+      </div>
+    </section>
+
+    <section id="glucose" class="panel">
+      <div class="panel__head"><h2>ثبت قند</h2></div>
+      <form class="form" id="glucoseForm">
+        <div class="form__row">
+          <label>مقدار قند (mg/dL)</label>
+          <input type="number" min="20" max="600" step="1" required name="value" placeholder="مثلاً 145" />
+        </div>
+        <div class="form__row">
+          <label>زمان</label>
+          <input type="datetime-local" required name="datetime" />
+        </div>
+        <div class="form__row">
+          <label>موقعیت اندازه‌گیری</label>
+          <select name="context" required>
+            <option value="fbs">ناشتا (FBS)</option>
+            <option value="post_breakfast_2h">۲ ساعت بعد صبحانه</option>
+            <option value="pre_lunch">قبل ناهار</option>
+            <option value="post_lunch_2h">۲ ساعت بعد ناهار</option>
+            <option value="pre_dinner">قبل شام</option>
+            <option value="post_dinner_2h">۲ ساعت بعد شام</option>
+            <option value="bedtime">قبل خواب</option>
+            <option value="custom">سایر</option>
+          </select>
+        </div>
+        <div class="form__row">
+          <label>یادداشت (اختیاری)</label>
+          <input type="text" name="note" placeholder="مثلاً پیاده‌روی داشتم" />
+        </div>
+        <button class="btn" type="submit">ثبت</button>
+        <p class="muted">در صورت ثبت مقدارهای حساس (کمتر از ۷۰ یا ۳۰۰ و بیشتر)، هشدار نمایش داده می‌شود.</p>
+      </form>
+    </section>
+
+    <section id="insulin" class="panel">
+      <div class="panel__head"><h2>ثبت انسولین</h2></div>
+      <form class="form" id="insulinForm">
+        <div class="form__row">
+          <label>نوع</label>
+          <select name="insulinType" required>
+            <option value="basal">بازال (طولانی‌اثر)</option>
+            <option value="bolus">بولوس (کوتاه‌اثر)</option>
+            <option value="correction">اصلاحی</option>
+          </select>
+        </div>
+        <div class="form__row">
+          <label>نام</label>
+          <input type="text" name="name" required placeholder="مثلاً Lantus یا Novorapid" />
+        </div>
+        <div class="form__row">
+          <label>واحد (u)</label>
+          <input type="number" name="units" min="0" max="100" step="0.5" required placeholder="مثلاً 16" />
+        </div>
+        <div class="form__row">
+          <label>زمان</label>
+          <input type="datetime-local" name="datetime" required />
+        </div>
+        <div class="form__row">
+          <label>لینک به وعده (اختیاری)</label>
+          <select name="relatedMealId" id="insulinMealSelect">
+            <option value="">—</option>
+          </select>
+        </div>
+        <div class="form__row">
+          <label>یادداشت (اختیاری)</label>
+          <input type="text" name="note" placeholder="مثلاً قبل از ورزش" />
+        </div>
+        <button class="btn" type="submit">ثبت</button>
+      </form>
+    </section>
+
+    <section id="meal" class="panel">
+      <div class="panel__head"><h2>ثبت وعده غذایی</h2></div>
+      <form class="form" id="mealForm">
+        <div class="form__row">
+          <label>عنوان</label>
+          <select name="title" required>
+            <option value="صبحانه">صبحانه</option>
+            <option value="ناهار">ناهار</option>
+            <option value="شام">شام</option>
+            <option value="میان‌وعده">میان‌وعده</option>
+          </select>
+        </div>
+        <div class="form__row">
+          <label>شرح کوتاه</label>
+          <input type="text" name="itemsText" required placeholder="مثلاً نان + پنیر + چای" />
+        </div>
+        <div class="form__row">
+          <label>کربوهیدرات کل (گرم)</label>
+          <input type="number" name="carbsGrams" min="0" max="500" step="1" required placeholder="مثلاً 45" />
+        </div>
+        <div class="form__row">
+          <label>زمان</label>
+          <input type="datetime-local" name="datetime" required />
+        </div>
+        <div class="form__row">
+          <label>لینک به قند ۲ ساعت بعد (اختیاری)</label>
+          <select name="linkedGlucoseId" id="mealGlucoseSelect">
+            <option value="">—</option>
+          </select>
+        </div>
+        <button class="btn" type="submit">ثبت</button>
+      </form>
+    </section>
+
+    <section id="reports" class="panel">
+      <div class="panel__head"><h2>گزارش‌ها</h2></div>
+      <div class="grid">
+        <div class="panel box">
+          <h3>گزارش روزانه</h3>
+          <div id="dailyTable" class="table"></div>
+        </div>
+        <div class="panel box">
+          <h3>گزارش هفتگی (ساده)</h3>
+          <div id="weeklyTable" class="table"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="reminders" class="panel">
+      <div class="panel__head"><h2>یادآورها</h2></div>
+      <div class="form">
+        <div class="form__row inline">
+          <label class="switch">
+            <input type="checkbox" id="basalReminderEnabled" />
+            <span class="slider"></span>
+          </label>
+          <div>
+            <div class="strong">یادآور بازال</div>
+            <div class="muted">داخل مرورگر ذخیره می‌شود.</div>
+          </div>
+        </div>
+        <div class="form__row">
+          <label>ساعت یادآور</label>
+          <input type="time" id="basalReminderTime" />
+        </div>
+        <button class="btn" id="saveReminder" type="button">ذخیره</button>
+      </div>
+    </section>
+
+    <section id="settings" class="panel">
+      <div class="panel__head"><h2>تنظیمات</h2></div>
+      <form class="form" id="settingsForm">
+        <div class="form__row">
+          <label>نوع دیابت</label>
+          <input type="text" value="نوع ۱" disabled />
+        </div>
+        <div class="form__row">
+          <label>واحد</label>
+          <input type="text" value="mg/dL" disabled />
+        </div>
+        <div class="form__row">
+          <label>هدف پایین</label>
+          <input type="number" name="targetLow" min="40" max="200" required />
+        </div>
+        <div class="form__row">
+          <label>هدف بالا</label>
+          <input type="number" name="targetHigh" min="100" max="400" required />
+        </div>
+        <button class="btn" type="submit">ذخیره تنظیمات</button>
+      </form>
+      <p class="muted">نسخه MVP: داده‌ها فقط روی همین مرورگر ذخیره می‌شوند.</p>
+    </section>
+  </main>
+
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="modal__card">
+      <div class="modal__head">
+        <div class="modal__title" id="modalTitle">هشدار</div>
+        <button class="btn btn--ghost" id="modalClose" type="button">بستن</button>
+      </div>
+      <div class="modal__body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div>© قندیار — نسخه آزمایشی وب</div>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>
