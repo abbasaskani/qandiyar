@@ -1,0 +1,229 @@
+
+:root{
+  --bg1:#f6fff8;
+  --bg2:#d8f3dc;
+  --card: rgba(255,255,255,0.78);
+  --border: rgba(45,106,79,0.18);
+  --text: #0f2a1a;
+  --muted: rgba(15,42,26,0.65);
+  --primary:#2d6a4f;
+  --primary2:#52b788;
+  --danger:#d62828;
+  --warn:#f77f00;
+  --shadow: 0 16px 40px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: "B Nazanin","B Kamran","Vazirmatn",Tahoma,Arial,sans-serif;
+  color:var(--text);
+  background: radial-gradient(1200px 600px at 15% 10%, var(--bg2), transparent 60%),
+              radial-gradient(1000px 600px at 80% 20%, rgba(82,183,136,0.26), transparent 60%),
+              linear-gradient(180deg, var(--bg1), #ffffff);
+  overflow-x:hidden;
+}
+.bg-anim{
+  position:fixed; inset:0;
+  background: linear-gradient(120deg, rgba(82,183,136,0.10), rgba(216,243,220,0.12), rgba(82,183,136,0.08));
+  filter: blur(40px);
+  animation: floaty 9s ease-in-out infinite alternate;
+  z-index:-1;
+}
+@keyframes floaty{
+  from{transform: translate3d(-10px,-10px,0) scale(1.02)}
+  to{transform: translate3d(10px,10px,0) scale(1.05)}
+}
+.app-header{
+  position: sticky; top:0; z-index:40;
+  display:flex; gap:14px; justify-content:space-between; align-items:center;
+  padding: 14px 16px;
+  backdrop-filter: blur(10px);
+  background: rgba(246,255,248,0.72);
+  border-bottom: 1px solid var(--border);
+}
+.brand{display:flex; align-items:center; gap:10px}
+.logo{width:42px;height:42px;border-radius:14px; display:grid; place-items:center;
+  background: linear-gradient(135deg, var(--primary), var(--primary2));
+  color:#fff; box-shadow: var(--shadow);
+}
+.title h1{margin:0; font-weight:900; letter-spacing:0.4px}
+.tagline{margin:0; font-weight:900}
+.tagline span{
+  display:inline-block;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+.header-actions{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; align-items:center}
+.btn{
+  border:1px solid var(--border);
+  padding:10px 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.7);
+  cursor:pointer;
+  font-weight:900;
+}
+.btn:hover{background: rgba(216,243,220,0.7)}
+.btn-primary{
+  background: linear-gradient(135deg, var(--primary), var(--primary2));
+  color:#fff; border:none;
+}
+.btn-primary:hover{filter: brightness(1.03)}
+.btn-danger{background: rgba(214,40,40,0.10); border-color: rgba(214,40,40,0.28)}
+.btn-ghost{background: rgba(255,255,255,0.52)}
+.container{max-width:1200px; margin: 16px auto; padding: 0 16px}
+.tabs{display:flex; gap:8px; flex-wrap:wrap; margin: 10px 0 14px}
+.tab{
+  border:1px solid var(--border);
+  background: rgba(255,255,255,0.62);
+  border-radius: 999px;
+  padding: 10px 12px;
+  font-weight:900;
+  cursor:pointer;
+}
+.tab.active{background: rgba(82,183,136,0.22)}
+.banner{
+  border:1px solid var(--border);
+  background: var(--card);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: var(--shadow);
+  margin-bottom: 14px;
+}
+.grid{display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:12px}
+@media (max-width: 980px){ .grid{grid-template-columns: 1fr} }
+.card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: var(--shadow);
+}
+.card h2{margin:0 0 10px; font-weight:900}
+.card h3{margin:0 0 10px; font-weight:900}
+.span-2{grid-column: span 2}
+@media (max-width: 980px){ .span-2{grid-column: span 1} }
+.card-head{display:flex; justify-content:space-between; gap:10px; align-items:flex-start; flex-wrap:wrap}
+.dash-controls{display:flex; gap:10px; flex-wrap:wrap}
+.pill{
+  border:1px solid var(--border);
+  background: rgba(255,255,255,0.65);
+  border-radius: 999px;
+  padding:8px 10px;
+  display:flex; gap:8px; align-items:center;
+  font-weight:900;
+}
+.pill input,.pill select{border:none; background:transparent; font-weight:900}
+.kpis{display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:10px; margin: 10px 0}
+@media (max-width: 980px){ .kpis{grid-template-columns: repeat(2, minmax(0,1fr))} }
+.kpi{
+  border:1px solid var(--border);
+  background: rgba(255,255,255,0.7);
+  border-radius: 16px;
+  padding: 12px;
+}
+.kpi .v{font-size:22px; font-weight:900; color: var(--primary)}
+.kpi .k{font-size:12px; color: var(--muted); font-weight:900; margin-top:4px}
+.chart-hero{height: 320px}
+.subgrid{display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:10px; margin-top:10px}
+@media (max-width: 980px){ .subgrid{grid-template-columns: 1fr} }
+.mini{border:1px solid var(--border); background: rgba(255,255,255,0.66); border-radius: 16px; padding: 12px}
+.big-metric{font-size:34px; font-weight:900; color: var(--primary)}
+.muted{color: var(--muted)}
+.hint{color: var(--muted); font-size:12px; margin-top:8px}
+.table-wrap{overflow:auto}
+table{width:100%; border-collapse:collapse}
+th,td{border-bottom:1px solid rgba(45,106,79,0.12); padding:10px; white-space:nowrap; text-align:right}
+thead th{background: rgba(216,243,220,0.55)}
+.action{border:1px solid var(--border); background: rgba(255,255,255,0.7); border-radius: 12px; padding:6px 10px; cursor:pointer; font-weight:900}
+.action:hover{background: rgba(216,243,220,0.7)}
+.panel{display:none}
+.panel.show{display:block}
+.form{display:flex; flex-direction:column; gap:10px}
+.row{display:flex; flex-direction:column; gap:6px}
+.row label{font-weight:900; color: var(--muted)}
+.row input,.row select{
+  border:1px solid rgba(45,106,79,0.18);
+  background: rgba(255,255,255,0.75);
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-weight:900;
+}
+.inline{display:flex; gap:10px; align-items:center}
+.sep{border:none; border-top:1px dashed rgba(45,106,79,0.25); margin:10px 0}
+.footer{padding: 18px 16px; text-align:center; color: var(--muted)}
+/* Switch */
+.switch{display:flex; align-items:center; gap:8px; font-weight:900; color:var(--muted)}
+.switch input{display:none}
+.slider{
+  width:44px; height:24px; border-radius:999px; background: rgba(0,0,0,0.12);
+  position:relative; border:1px solid rgba(45,106,79,0.18);
+}
+.slider:after{
+  content:""; position:absolute; top:2px; right:2px;
+  width:18px; height:18px; border-radius:999px;
+  background:#fff; box-shadow: var(--shadow);
+  transition: all .2s ease;
+}
+.switch input:checked + .slider{background: rgba(82,183,136,0.35)}
+.switch input:checked + .slider:after{right:24px}
+.switch-label{font-size:12px}
+/* Chips & alerts */
+.chip{
+  display:inline-flex; align-items:center; gap:6px;
+  border:1px solid rgba(45,106,79,0.18);
+  background: rgba(255,255,255,0.7);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-weight:900;
+  margin: 4px 0;
+}
+.chip.ok{border-color: rgba(45,106,79,0.22); background: rgba(82,183,136,0.16)}
+.chip.warn{border-color: rgba(247,127,0,0.25); background: rgba(247,127,0,0.12)}
+.chip.danger{border-color: rgba(214,40,40,0.25); background: rgba(214,40,40,0.10)}
+.alert{margin-top:10px; border-radius: 16px; padding: 12px; border:1px solid var(--border); background: rgba(255,255,255,0.72)}
+.alert.ok{border-color: rgba(45,106,79,0.22)}
+.alert.warn{border-color: rgba(247,127,0,0.28)}
+.alert.danger{border-color: rgba(214,40,40,0.28)}
+/* Nutrition */
+.foodbar{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:10px}
+.foodbar input,.foodbar select{border:1px solid rgba(45,106,79,0.18); background: rgba(255,255,255,0.75); border-radius:14px; padding:10px 12px; font-weight:900}
+.food-results{display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:10px}
+@media (max-width: 980px){ .food-results{grid-template-columns: 1fr} }
+.food-card{border:1px solid rgba(45,106,79,0.14); background: rgba(255,255,255,0.72); border-radius: 16px; padding: 12px}
+.food-card .name{font-weight:900}
+.food-card .meta{font-size:12px; color: var(--muted); margin-top:4px}
+/* v4 additions */
+.fab{position: fixed; left: 18px; bottom: 18px; width: 56px; height:56px; border-radius: 18px; font-size: 26px;
+  background: linear-gradient(135deg, var(--primary), var(--primary2)); color:#fff; border:none; box-shadow: var(--shadow); cursor:pointer; z-index:50;}
+.fab-menu{position: fixed; left: 18px; bottom: 82px; display:flex; flex-direction:column; gap:10px; z-index:50;}
+.timeline{display:flex; flex-direction:column; gap:10px}
+.titem{border:1px solid rgba(45,106,79,0.14); border-radius: 16px; background: rgba(255,255,255,0.72); padding: 12px; display:flex; justify-content:space-between; gap:10px}
+.tleft{display:flex; gap:10px; align-items:flex-start}
+.ticon{font-size:18px}
+.tmeta{font-size:12px; color: var(--muted)}
+.tval{font-weight:900; color: var(--primary)}
+.quick-add{margin-bottom:10px}
+.quick-row{display:flex; gap:8px; flex-wrap:wrap}
+.chip-btn{border:1px solid rgba(45,106,79,0.18); background: rgba(255,255,255,0.7); border-radius: 999px; padding: 8px 10px; font-weight:900; cursor:pointer}
+.chip-btn:hover{ background: rgba(216,243,220,0.7) }
+.edu-nav{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px}
+.article{border:1px solid rgba(45,106,79,0.14); border-radius: 16px; background: rgba(255,255,255,0.72); padding: 14px; color: var(--muted); line-height: 2.0;}
+.article h3{margin:0 0 8px; color: var(--primary)}
+.video-grid{display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px}
+.video iframe{width:100%; height:260px; border:0; border-radius: 16px}
+.goals{display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:10px}
+.goal{border:1px solid rgba(45,106,79,0.14); border-radius: 16px; background: rgba(255,255,255,0.72); padding: 12px}
+.goal .v{font-weight:900; font-size:18px; color: var(--primary)}
+.goal .k{font-size:12px; color: var(--muted); font-weight:700}
+.checklist{display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:10px}
+.ck{border:1px solid rgba(45,106,79,0.14); border-radius: 16px; background: rgba(255,255,255,0.72); padding: 12px}
+.ck label{display:flex; gap:10px; align-items:flex-start; cursor:pointer}
+.ck .t{font-weight:900; color: var(--primary)}
+.ck .d{color: var(--muted); font-size:12px; margin-top:4px}
+@media (max-width: 980px){
+  .video-grid{grid-template-columns: 1fr}
+  .goals{grid-template-columns: 1fr}
+  .checklist{grid-template-columns: 1fr}
+}
