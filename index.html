@@ -1,462 +1,0 @@
-<!doctype html>
-<html lang="fa" dir="rtl">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>قندیار | داشبورد حرفه‌ای</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-</head>
-<body>
-  <div class="bg-anim" aria-hidden="true"></div>
-
-  <header class="app-header">
-    <div class="brand">
-      <div class="logo">💚</div>
-      <div class="title">
-        <h1 id="brand-title">قندیار</h1>
-        <p class="tagline"><span id="brand-tagline">با قندیار، گامی برای سلامتی بردار.</span></p>
-      </div>
-    </div>
-
-    <div class="header-actions">
-      <label class="switch" title="Demo Mode (غیرواقعی)">
-        <input id="demo-toggle" type="checkbox" />
-        <span class="slider"></span>
-        <span class="switch-label">Demo 🤖</span>
-      </label>
-
-      <label class="switch" title="Language">
-        <input id="lang-toggle" type="checkbox" />
-        <span class="slider"></span>
-        <span class="switch-label">FA/EN 🌐</span>
-      </label>
-
-      <button id="btn-load-sample" class="btn btn-ghost" title="لود دیتای نمونه (بدون fetch)">📦 دیتای نمونه</button>
-      <button id="btn-export" class="btn btn-ghost">⬇️ خروجی JSON</button>
-      <button id="btn-export-csv" class="btn btn-ghost">⬇️ CSV</button>
-      <label class="btn btn-ghost">
-        ⬆️ ورودی JSON
-        <input id="file-import" type="file" accept="application/json" hidden />
-      </label>
-      <button id="btn-pdf" class="btn btn-ghost">🧾 PDF پزشک</button>
-      <button id="btn-reset" class="btn btn-danger">🗑️ ریست</button>
-    </div>
-  </header>
-
-  <main class="container">
-    <nav class="tabs" aria-label="منو">
-      <button class="tab active" data-tab="dashboard">📊 داشبورد</button>
-      <button class="tab" data-tab="timeline">🧾 تایم‌لاین</button>
-      <button class="tab" data-tab="register">📝 ثبت</button>
-      <button class="tab" data-tab="nutrition">🍽️ تغذیه</button>
-      <button class="tab" data-tab="analytics">🧠 تحلیل</button>
-      <button class="tab" data-tab="education">🎓 آموزش</button>
-      <button class="tab" data-tab="data">🗂️ داده‌ها</button>
-      <button class="tab" data-tab="profile">👤 پروفایل</button>
-      <button class="tab" data-tab="sickday">🧰 Sick-day</button>
-      <button class="tab" data-tab="audit">🧾 لاگ</button>
-    </nav>
-
-    <section id="banner" class="banner" hidden></section>
-
-    <button id="fab" class="fab" title="ثبت سریع +">＋</button>
-    <div id="fab-menu" class="fab-menu" hidden>
-      <button class="btn btn-primary" data-quick="glucose">🩸 ثبت قند</button>
-      <button class="btn btn-primary" data-quick="meal">🍽️ ثبت وعده</button>
-      <button class="btn btn-primary" data-quick="insulin">💉 ثبت انسولین</button>
-    </div>
-
-    <section class="panel show" id="tab-dashboard">
-      <div class="grid">
-        <div class="card span-2">
-          <div class="card-head">
-            <h2 id="dash-title">📊 داشبورد قند خون</h2>
-            <div class="dash-controls">
-              <div class="pill">
-                <span id="range-lbl">بازه:</span>
-                <select id="range-select">
-                  <option value="day">روز</option>
-                  <option value="week">۷ روز</option>
-                  <option value="month" selected>۳۰ روز</option>
-                </select>
-              </div>
-              <div class="pill">
-                <span id="enddate-lbl">تاریخ انتهایی:</span>
-                <input id="range-date" type="date" />
-              </div>
-              <div class="pill">
-                <span id="zone-lbl">ناحیه هدف:</span>
-                <select id="zone-style">
-                  <option value="bands" selected>رنگی</option>
-                  <option value="gradient">گرادیان</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="kpis" id="kpi-row"></div>
-
-          <div class="chart-hero">
-            <canvas id="glucoseChart"></canvas>
-          </div>
-
-          <div class="subgrid">
-            <div class="mini">
-              <h3>⏱️ زمان در هدف (تخمینی)</h3>
-              <div id="tir-hours" class="big-metric">—</div>
-              <div class="muted" id="tir-detail"></div>
-              <div class="hint">محاسبه با اینترپولیشن خطی بین نقاط همان روز انجام می‌شود.</div>
-            </div>
-
-            <div class="mini">
-              <h3>📌 الگوها</h3>
-              <div id="patterns" class="insights"></div>
-            </div>
-
-            <div class="mini">
-              <h3>🤖 Demo Suggestions</h3>
-              <div id="ai-insights" class="insights"></div>
-              <div class="hint">⚠️ فقط دمو/آموزشی — عدد دوز واقعی ندارد.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>🍽️ تحلیل وعده‌ها (مرتب)</h2>
-          <div class="table-wrap">
-            <table id="tbl-meal-analysis">
-              <thead><tr><th>تاریخ</th><th>وعده</th><th>کربوهیدرات</th><th>قند ۲ساعت بعد</th><th>وضعیت</th></tr></thead>
-              <tbody></tbody>
-            </table>
-          </div>
-          <div class="hint">🔗 هر وعده را به قند ۲ ساعت بعد لینک کن تا تحلیل دقیق‌تر شود.</div>
-        </div>
-
-        <div class="card">
-          <h2>🔥 Heatmap روز/ساعت</h2>
-          <canvas id="heatmap" height="260"></canvas>
-          <div class="hint">هر خانه: میانگین تخمینی قند در آن ساعت (نمایشی).</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="tab-timeline">
-      <div class="grid">
-        <div class="card span-2">
-          <div class="card-head">
-            <h2>🧾 تایم‌لاین روزانه</h2>
-            <div class="pill">
-              <span>روز:</span>
-              <input id="timeline-date" type="date" />
-            </div>
-          </div>
-          <div id="timeline" class="timeline"></div>
-          <div class="hint">قند/انسولین/غذا به ترتیب زمانی کنار هم.</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="tab-register">
-      <div class="grid">
-        <div class="card">
-          <h2>🩸 ثبت قند</h2>
-
-          <div class="quick-add">
-            <div class="muted">Quick Add:</div>
-            <div class="quick-row">
-              <button class="chip-btn" data-q="90">90</button>
-              <button class="chip-btn" data-q="120">120</button>
-              <button class="chip-btn" data-q="150">150</button>
-              <button class="chip-btn" data-q="180">180</button>
-              <button class="chip-btn" data-q="220">220</button>
-            </div>
-          </div>
-
-          <form id="glucose-form" class="form">
-            <div class="row">
-              <label>تاریخ</label>
-              <input name="date" type="date" />
-            </div>
-            <div class="row">
-              <label>حالت</label>
-              <select name="slot">
-                <option value="FBS">FBS (ناشتا)</option>
-                <option value="AfterBreakfast2h">۲ ساعت بعد صبحانه</option>
-                <option value="BeforeLunch">قبل ناهار</option>
-                <option value="AfterLunch2h">۲ ساعت بعد ناهار</option>
-                <option value="BeforeDinner">قبل شام</option>
-                <option value="AfterDinner2h">۲ ساعت بعد شام</option>
-                <option value="BeforeBed">قبل خواب</option>
-              </select>
-            </div>
-            <div class="row">
-              <label>عدد قند</label>
-              <input name="value" type="number" min="20" max="600" required placeholder="مثلاً 145" />
-            </div>
-            <div class="row">
-              <label>یادداشت</label>
-              <input name="note" type="text" placeholder="استرس/ورزش/تب..." />
-            </div>
-            <button class="btn btn-primary" type="submit">✅ ثبت</button>
-            <p class="hint">🟢 داخل هدف | 🟡 خارج هدف | 🟥 هیپو | 🟧 هایپر شدید</p>
-          </form>
-          <div id="alert-box" class="alert" hidden></div>
-        </div>
-
-        <div class="card">
-          <h2>💉 ثبت انسولین</h2>
-          <form id="insulin-form" class="form">
-            <div class="row">
-              <label>تاریخ</label>
-              <input name="date" type="date" />
-            </div>
-            <div class="row">
-              <label>نوع</label>
-              <select name="kind">
-                <option value="Basal">Basal</option>
-                <option value="Bolus">Bolus</option>
-                <option value="Correction">Correction</option>
-              </select>
-            </div>
-            <div class="row">
-              <label>نام</label>
-              <input name="name" type="text" placeholder="Lantus / Novorapid" required />
-            </div>
-            <div class="row">
-              <label>واحد (ثبت‌شده)</label>
-              <input name="units" type="number" min="0" max="100" step="0.5" required />
-            </div>
-            <div class="row">
-              <label>ساعت</label>
-              <input name="time" type="time" />
-            </div>
-            <div class="row">
-              <label>وعده</label>
-              <select name="mealRef">
-                <option value="">—</option>
-                <option value="Breakfast">صبحانه</option>
-                <option value="Lunch">ناهار</option>
-                <option value="Dinner">شام</option>
-              </select>
-            </div>
-            <div class="row">
-              <label>یادآور Basal</label>
-              <div class="inline">
-                <input id="basal-reminder" name="reminder" type="checkbox" />
-                <span>فعال شود</span>
-              </div>
-            </div>
-            <button class="btn btn-primary" type="submit">💉 ثبت</button>
-          </form>
-          <div class="hint">⏰ اگر در بازه‌ای ثبت انجام نشود، Check-in هم فعال می‌شود.</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="tab-nutrition">
-      <div class="grid">
-        <div class="card span-2">
-          <h2>🍽️ بانک غذای ایرانی (گسترده)</h2>
-          <div class="foodbar">
-            <input id="food-search" type="text" placeholder="جستجو: برنج، نان، خورشت، میوه..." />
-            <select id="food-cat"></select>
-            <select id="food-unit">
-              <option value="g" selected>گرم</option>
-              <option value="serv">پرس/واحد</option>
-            </select>
-            <input id="food-amount" type="number" min="1" step="1" value="100" />
-            <button id="btn-add-food" class="btn btn-primary">➕ افزودن به وعده</button>
-          </div>
-          <div id="food-results" class="food-results"></div>
-          <div class="hint">✅ انتخاب غذا → کربوهیدرات تخمینی → ثبت وعده سریع‌تر</div>
-        </div>
-
-        <div class="card">
-          <h2>🍽️ ثبت وعده + الگو</h2>
-          <form id="meal-form" class="form">
-            <div class="row">
-              <label>تاریخ</label>
-              <input name="date" type="date" />
-            </div>
-            <div class="row">
-              <label>وعده</label>
-              <select name="meal">
-                <option value="Breakfast">صبحانه</option>
-                <option value="Lunch">ناهار</option>
-                <option value="Dinner">شام</option>
-                <option value="Snack">میان‌وعده</option>
-              </select>
-            </div>
-            <div class="row">
-              <label>قالب آماده</label>
-              <select name="template" id="meal-template"></select>
-            </div>
-            <div class="row">
-              <label>شرح</label>
-              <input name="desc" type="text" required />
-            </div>
-            <div class="row">
-              <label>کربوهیدرات (g)</label>
-              <input name="carbs" type="number" min="0" max="400" step="1" required />
-            </div>
-            <div class="row">
-              <label>لینک قند ۲ساعت بعد</label>
-              <select name="linkToSlot">
-                <option value="">—</option>
-                <option value="AfterBreakfast2h">بعد صبحانه</option>
-                <option value="AfterLunch2h">بعد ناهار</option>
-                <option value="AfterDinner2h">بعد شام</option>
-              </select>
-            </div>
-            <button class="btn btn-primary" type="submit">✅ ثبت وعده</button>
-          </form>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="tab-analytics">
-      <div class="grid">
-        <div class="card">
-          <h2>📊 Histogram توزیع قند</h2>
-          <canvas id="hist" height="220"></canvas>
-        </div>
-        <div class="card">
-          <h2>🧬 AGP نمایشی</h2>
-          <canvas id="agp" height="220"></canvas>
-          <div class="hint">نمایش میانه و باند درصدی روی اسلات‌های روز (برای UI).</div>
-        </div>
-        <div class="card span-2">
-          <h2>🎯 Goals Tracker</h2>
-          <div id="goals" class="goals"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="tab-education">
-      <div class="grid">
-        <div class="card span-2">
-          <h2>🎓 آموزش جامع (متن زیاد + ویدیو)</h2>
-          <div class="edu-nav">
-            <button class="chip-btn" data-edu="basics">مبانی</button>
-            <button class="chip-btn" data-edu="hypo">هیپو</button>
-            <button class="chip-btn" data-edu="hyper">هایپر</button>
-            <button class="chip-btn" data-edu="carb">کربوهیدرات</button>
-            <button class="chip-btn" data-edu="exercise">ورزش</button>
-            <button class="chip-btn" data-edu="school">مدرسه/امتحان</button>
-          </div>
-          <article id="edu-article" class="article"></article>
-          <div class="video-grid">
-            <div class="video"><iframe id="yt1" src="" title="YouTube" allowfullscreen></iframe></div>
-            <div class="video"><iframe id="ap1" src="" title="Aparat" allowfullscreen></iframe></div>
-          </div>
-          <div class="hint">⚠️ محتوا آموزشی است و جایگزین پزشک نیست.</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="tab-data">
-      <section class="card">
-        <h2>🗂️ داده‌ها (مرتب)</h2>
-        <div class="tables">
-          <div>
-            <h3>🩸 قند</h3>
-            <div class="table-wrap">
-              <table id="tbl-glucose">
-                <thead><tr><th>تاریخ</th><th>حالت</th><th>قند</th><th>یادداشت</th><th></th></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-          <div>
-            <h3>💉 انسولین</h3>
-            <div class="table-wrap">
-              <table id="tbl-insulin">
-                <thead><tr><th>تاریخ</th><th>نوع</th><th>نام</th><th>واحد</th><th>ساعت</th><th>وعده</th><th></th></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-          <div>
-            <h3>🍽️ وعده‌ها</h3>
-            <div class="table-wrap">
-              <table id="tbl-meal">
-                <thead><tr><th>تاریخ</th><th>وعده</th><th>شرح</th><th>کربوهیدرات</th><th>لینک</th><th></th></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-    </section>
-
-    <section class="panel" id="tab-profile">
-      <div class="grid">
-        <div class="card">
-          <h2>👤 پروفایل</h2>
-          <form id="profile-form" class="form">
-            <div class="row"><label>واحد</label>
-              <select name="unit"><option value="mg/dL" selected>mg/dL</option><option value="mmol/L">mmol/L</option></select>
-            </div>
-            <div class="row"><label>نوع</label>
-              <select name="diabetesType"><option value="Type 1" selected>Type 1</option><option value="Type 2">Type 2</option></select>
-            </div>
-            <div class="row"><label>هدف پایین</label><input name="targetLow" type="number" value="80"/></div>
-            <div class="row"><label>هدف بالا</label><input name="targetHigh" type="number" value="180"/></div>
-
-            <hr class="sep"/>
-
-            <div class="row"><label>قد</label><input name="heightCm" type="number" placeholder="cm"/></div>
-            <div class="row"><label>وزن</label><input name="weightKg" type="number" placeholder="kg"/></div>
-            <div class="row"><label>سال تولد</label><input name="birthYear" type="number"/></div>
-            <div class="row"><label>شروع بیماری</label><input name="dxDate" type="date"/></div>
-            <div class="row"><label>سایر بیماری‌ها</label><input name="otherCond" type="text"/></div>
-
-            <button class="btn btn-primary" type="submit">💾 ذخیره</button>
-          </form>
-        </div>
-
-        <div class="card">
-          <h2>📈 قد/وزن (نمایشی)</h2>
-          <canvas id="growthChart" height="220"></canvas>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="tab-sickday">
-      <div class="grid">
-        <div class="card span-2">
-          <h2>🧰 Sick-day & Ketone checklist</h2>
-          <div class="checklist" id="sick-check"></div>
-          <div class="hint">✅ چک‌لیست تعاملی برای شرایط بیماری/قند بالا (آموزشی).</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="tab-audit">
-      <div class="grid">
-        <div class="card span-2">
-          <h2>🧾 Log تغییرات</h2>
-          <div class="table-wrap">
-            <table id="tbl-audit">
-              <thead><tr><th>زمان</th><th>عملیات</th><th>جزئیات</th></tr></thead>
-              <tbody></tbody>
-            </table>
-          </div>
-          <div class="hint">هر ثبت/حذف برای اعتماد و پیگیری (نمایشی).</div>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <footer class="footer">قندیار 💚 — نسخه وب آموزشی/دمو</footer>
-
-  <script src="./food_db.js"></script>
-  <script src="./sample_data.js"></script>
-  <script src="./app.js"></script>
-</body>
-</html>
